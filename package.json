@@ -2,7 +2,7 @@
   "name": "@siteclue/tracker",
   "version": "0.1.0",
   "author": "Maciej Radzikowski",
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "esbuild src/index.ts --bundle --minify --outfile=dist/index.js --global-name=siteClue",
     "watch": "yarn run build --watch",
