@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SiteClue Tracker</title>
+</head>
+<body>
+
+<h3>Console log:</h3>
+<div id="log"></div>
+
+<script>
+    console.log = ((originalFn, container) => data => {
+        originalFn(data);
+
+        const node = document.createElement('div');
+        node.textContent = data;
+        container.appendChild(node);
+    })(console.log.bind(console), document.getElementById('log'));
+</script>
+
+<!--<script async defer src="./dist/index.js"-->
+<!--        data-siteclue-id="qq"-->
+<!--&gt;-->
+<!--</script>-->
+
+<script src="./dist/index.js"></script>
+<script>
+    siteClue.init('qq');
+</script>
+
+</body>
+</html>
