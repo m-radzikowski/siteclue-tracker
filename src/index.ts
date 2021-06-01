@@ -1,8 +1,22 @@
-const send = (url: string, data: Record<string, unknown>) => {
-    const request = new XMLHttpRequest();
-    request.open('POST', url, true);
-    request.setRequestHeader('Content-Type', 'application/json');
-    request.send(JSON.stringify(data));
+let config: {
+    url: string;
+    disable: boolean;
+};
+
+const send = (data: Record<string, unknown>, asBeacon = false) => {
+    if (config.disable) {
+        return;
+    }
+
+    if (asBeacon) {
+        const blob = new Blob([JSON.stringify(data)]);
+        navigator.sendBeacon(config.url, blob);
+    } else {
+        const request = new XMLHttpRequest();
+        request.open('POST', config.url, true);
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.send(JSON.stringify(data));
+    }
 };
 
 const onDocumentReady = (fn: () => void) => {
@@ -13,20 +27,22 @@ const onDocumentReady = (fn: () => void) => {
     }
 };
 
+const currentUrl = () =>
+    window.location.origin + window.location.pathname;
+
 export const init = (id: string, {
     endpoint = 'wh1clg0ena.execute-api.eu-west-1.amazonaws.com',
+    disable = false,
 }: SiteClueOptions = {}): void => {
-    const disable = localStorage.getItem('SiteClue.disable') !== null;
-    if (disable) {
-        return;
-    }
+    config = {
+        url: `https://${endpoint}/collect`,
+        disable: disable || localStorage.getItem('SiteClue.disable') !== null,
+    };
 
-    const url = `https://${endpoint}/collect`;
-
-    const {screen, location} = window;
-    send(url, {
+    const {screen} = window;
+    send({
         action: 'view',
-        url: location.origin + location.pathname,
+        url: currentUrl(),
         referrer: document.referrer,
         screen: {
             w: screen.width,
@@ -48,7 +64,7 @@ export const init = (id: string, {
                 }
             } else {
                 if (openTime) {
-                    duration += performance.now() - openTime;
+                    duration = performance.now() - openTime;
                     openTime = undefined;
                 }
             }
@@ -64,16 +80,15 @@ export const init = (id: string, {
                 const totalDuration = Math.round(duration / 1000);
                 duration = 0;
 
-                if (totalDuration < 3) {
+                if (totalDuration < 5) {
                     return;
                 }
 
-                const blob = new Blob([JSON.stringify({
+                send({
                     action: 'leave',
-                    url: location.origin + location.pathname,
+                    url: currentUrl(),
                     duration: totalDuration,
-                })]);
-                navigator.sendBeacon(url, blob);
+                }, true);
             }
         });
     }
@@ -81,7 +96,18 @@ export const init = (id: string, {
 
 export interface SiteClueOptions {
     endpoint?: string;
+    disable?: boolean;
 }
+
+export const event = (category: string, action: string, label?: string): void => {
+    send({
+        action: 'event',
+        url: currentUrl(),
+        category,
+        eventAction: action,
+        label,
+    });
+};
 
 const attrPrefix = 'data-siteclue-';
 const script = document.querySelector(`script[${attrPrefix}id]`);
