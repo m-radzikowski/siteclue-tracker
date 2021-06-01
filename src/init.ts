@@ -45,7 +45,7 @@ const monitorDuration = () => {
     };
 
     ['focus', 'blur', 'visibilitychange'].forEach(event =>
-        window.addEventListener(event, onPageStateChange),
+        window.addEventListener(event, onPageStateChange, true),
     );
     onDocumentReady(onPageStateChange);
 
@@ -64,7 +64,7 @@ const monitorDuration = () => {
                 duration: totalDuration,
             }, true);
         }
-    });
+    }, true);
 };
 
 export const initFromScriptTag = (): void => {
