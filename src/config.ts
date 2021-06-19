@@ -1,5 +1,6 @@
 export const config = {
-    endpoint: 'wh1clg0ena.execute-api.eu-west-1.amazonaws.com',
+    id: '',
+    endpoint: 'data.siteclue.app',
     disable: false,
 };
 

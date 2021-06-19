@@ -1,17 +1,22 @@
 import {attrPrefix, config} from './config';
 import {send} from './send';
-import {currentUrl, onDocumentReady} from './util';
+import {onDocumentReady} from './util';
+import {setupEventsFromDataAttrs} from './event';
 
 export const init = (id: string, options?: SiteClueOptions): void => {
+    config.id = id;
     if (options?.endpoint !== undefined) {
         config.endpoint = options.endpoint;
     }
+
     config.disable = options?.disable || localStorage.getItem('SiteClue.disable') === 'true';
 
+    if (config.disable) {
+        return;
+    }
+
     const {screen} = window;
-    send({
-        action: 'view',
-        url: currentUrl(),
+    send('view', {
         referrer: document.referrer,
         screen: {
             w: screen.width,
@@ -19,9 +24,9 @@ export const init = (id: string, options?: SiteClueOptions): void => {
         },
     });
 
-    if (navigator.sendBeacon !== undefined) {
-        monitorDuration();
-    }
+    monitorDuration();
+
+    onDocumentReady(setupEventsFromDataAttrs);
 };
 
 const monitorDuration = () => {
@@ -58,11 +63,9 @@ const monitorDuration = () => {
                 return;
             }
 
-            send({
-                action: 'leave',
-                url: currentUrl(),
+            send('leave', {
                 duration: totalDuration,
-            }, true);
+            });
         }
     }, true);
 };
