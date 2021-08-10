@@ -1,6 +1,6 @@
 import {attrPrefix, config} from './config';
 import {send} from './send';
-import {onDocumentReady} from './util';
+import {currentUrl, onDocumentReady} from './util';
 import {setupEventsFromDataAttrs} from './event';
 
 export const init = (id: string, options?: SiteClueOptions): void => {
@@ -15,18 +15,54 @@ export const init = (id: string, options?: SiteClueOptions): void => {
         return;
     }
 
+    sendView(document.referrer);
+
+    /* eslint-disable @typescript-eslint/unbound-method */
+    history.pushState = after(history.pushState, afterHistoryChange);
+    history.replaceState = after(history.replaceState, afterHistoryChange);
+    history.back = after(history.back, afterHistoryChange);
+    history.forward = after(history.forward, afterHistoryChange);
+    history.go = after(history.go, afterHistoryChange);
+    window.onpopstate = after(window.onpopstate, afterHistoryChange);
+    /* eslint-enable */
+
+    monitorDuration();
+
+    onDocumentReady(setupEventsFromDataAttrs);
+};
+
+const after = (fn: ((...args: never[]) => void) | null, callback: (...args: unknown[]) => void) => {
+    return function (...args: unknown[]) {
+        if (fn) {
+            // @ts-ignore
+            fn.apply(this, args);
+        }
+        callback(...args);
+    };
+};
+
+let previousRef = currentUrl();
+const afterHistoryChange = () => {
+    const newRef = currentUrl();
+    if (previousRef !== newRef) {
+        sendView(previousRef);
+        previousRef = newRef;
+
+        // TODO
+        // removeEvents();
+        // setTimeout(setupEventsFromDataAttrs, 300);
+    }
+};
+
+const sendView = (referrer: string) => {
     const {screen} = window;
     send('view', {
-        referrer: document.referrer,
+        referrer: referrer,
         screen: {
             w: screen.width,
             h: screen.height,
         },
     });
-
-    monitorDuration();
-
-    onDocumentReady(setupEventsFromDataAttrs);
 };
 
 const monitorDuration = () => {

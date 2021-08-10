@@ -7,4 +7,4 @@ export const onDocumentReady = (fn: () => void): void => {
 };
 
 export const currentUrl = (): string =>
-    window.location.origin + window.location.pathname;
+    window.location.origin + window.location.pathname + window.location.search;

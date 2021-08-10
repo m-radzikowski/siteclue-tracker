@@ -12,6 +12,9 @@
 <button data-siteclue-event="click:button:clicked:data">Send event from data attribute</button>
 <br/>
 
+<button onclick="history.pushState({}, 'title', `?page=${Math.round(Math.random()*100)}`)">Push history state</button>
+<br/>
+
 <h3>Console log:</h3>
 <div id="log"></div>
 
