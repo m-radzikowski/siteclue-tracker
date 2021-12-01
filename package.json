@@ -12,17 +12,25 @@
     "prepare": "husky install",
     "ci": "yarn install --frozen-lockfile",
     "lint": "eslint .",
-    "build": "rimraf dist && esbuild src/index.ts --bundle --minify --outfile=dist/siteclue-tracker.js --global-name=siteClue",
-    "watch": "yarn run build --watch",
+    "prebuild": "rimraf dist/",
+    "build": "yarn build:cjs && yarn build:es && yarn build:single",
+    "build:cjs": "tsc -p tsconfig.json",
+    "build:es": "tsc -p tsconfig.es.json",
+    "build:single": "esbuild src/index.ts --bundle --minify --outfile=dist/siteclue-tracker.js --global-name=siteClue",
+    "watch": "yarn build:single --watch",
     "check-types": "tsc --noEmit",
     "size": "size-limit",
     "release": "standard-version"
   },
-  "main": "dist/siteclue-tracker.js",
+  "main": "dist/cjs/index.js",
+  "types": "dist/types/index.d.ts",
+  "module": "dist/es/index.js",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
+  "dependencies": {
+    "tslib": "^2.1.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "15.0.0",
     "@commitlint/config-conventional": "15.0.0",
@@ -46,7 +54,12 @@
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
-    ]
+    ],
+    "rules": {
+      "subject-case": [
+        0
+      ]
+    }
   },
   "size-limit": [
     {
