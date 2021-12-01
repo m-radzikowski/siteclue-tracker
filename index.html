@@ -9,7 +9,10 @@
 <button onclick="siteClue.event('button', 'clicked', 'js')">Send event from JS onclick</button>
 <br/>
 
-<button data-siteclue-event="click:button:clicked:data">Send event from data attribute</button>
+<button data-siteclue-event="click:button/clicked/data">Send event from data attribute</button>
+<br/>
+
+<button data-siteclue-click="button/clicked/data">Send event from click data attribute</button>
 <br/>
 
 <button onclick="history.pushState({}, 'title', `?page=${Math.round(Math.random()*100)}`)">Push history state</button>
@@ -28,10 +31,14 @@
     })(console.log.bind(console), document.getElementById('log'));
 </script>
 
-<script src="./dist/siteclue-tracker.js"></script>
-<script>
-    siteClue.init('123456');
-</script>
+<script async defer src="./dist/siteclue-tracker.js"
+        data-id="123456"
+        data-endpoint="data.dev.siteclue.mradzikowski-dev-tracker.click"
+></script>
+<!--<script src="./dist/siteclue-tracker.js"></script>-->
+<!--<script>-->
+<!--    siteClue.init('123456', {endpoint: 'data.dev.siteclue.mradzikowski-dev-tracker.click'});-->
+<!--</script>-->
 
 </body>
 </html>

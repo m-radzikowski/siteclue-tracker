@@ -6,7 +6,7 @@
 
 ```html
 <script async defer src="siteclue-tracker.js"
-        data-siteclue-id="123456">
+        data-id="123456">
 </script>
 ```
 
@@ -36,20 +36,30 @@ The `label` is optional.
 ### Automatic event attachment
 
 ```html
-<button data-siteclue-event="click:button:clicked:data">
+<button data-siteclue-event="click:button/clicked/data">
     Click me
 </button>
 ```
 
-`data-siteclue-event` field value is built from 4 parts separated with a colon (`:`):
+`data-siteclue-event` field value is built from 4 parts:
 
 ```
-trigger:category:action[:label]
+trigger:category/action[/label]
 ```
 
 `trigger` is a [JavaScript event](https://developer.mozilla.org/en-US/docs/Web/API/Element#events)
 name to attach the event trigger to.
 For example, the `click` value will trigger event to be sent on element mouse click.
+
+The `label` part is optional.
+
+For the `click` trigger, there is a shorter helper for setting the event:
+
+```html
+<button data-siteclue-click="button/clicked/data">
+    Click me
+</button>
+```
 
 ### Manual event sending
 

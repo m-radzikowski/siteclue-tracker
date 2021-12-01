@@ -1,4 +1,4 @@
-import {attrPrefix, config} from './config';
+import {config} from './config';
 import {send} from './send';
 import {currentUrl, onDocumentReady} from './util';
 import {setupEventsFromDataAttrs} from './event';
@@ -107,13 +107,11 @@ const monitorDuration = () => {
 };
 
 export const initFromScriptTag = (): void => {
-    const script = document.querySelector(`script[${attrPrefix}id]`);
+    const script = document.currentScript;
+    const id = script?.getAttribute('data-id');
 
-    if (script !== null) {
-        const attr = (key: string) => script.getAttribute(attrPrefix + key);
-
-        const id = attr('id') as string;
-        const endpoint = attr('endpoint') || undefined;
+    if (script && id) {
+        const endpoint = script.getAttribute('data-endpoint') || undefined;
 
         init(id, {
             endpoint,
