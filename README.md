@@ -5,7 +5,7 @@
 ### Automatic init
 
 ```html
-<script async defer src="siteclue-tracker.js"
+<script async defer src="https://cdn.jsdelivr.net/npm/siteclue-tracker@0.1/dist/siteclue-tracker.js"
         data-id="123456">
 </script>
 ```
@@ -13,10 +13,26 @@
 ### Manual init
 
 ```html
-<script async defer src="siteclue-tracker.js"></script>
+<script async defer src="https://cdn.jsdelivr.net/npm/siteclue-tracker@0.1/dist/siteclue-tracker.js"></script>
 <script>
     siteClue.init('123456');
 </script>
+```
+
+### Bundling with other scripts
+
+Install:
+
+```bash
+npm install siteclue-tracker
+```
+
+Initialize:
+
+```ts
+import {init} from 'siteclue-tracker';
+
+init('123456');
 ```
 
 ## Sending events
